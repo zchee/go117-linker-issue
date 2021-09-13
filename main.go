@@ -1,13 +1,25 @@
 package main
 
 import (
+	_ "encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"plugin"
 
-	_ "encoding/json"
+	_ "google.golang.org/grpc"
 )
 
 func main() {
-	plugin.Open(fmt.Sprintf("plugin-%s.so", os.Args[1]))
+	p, err := plugin.Open(os.Args[1])
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	sym, err := p.Lookup("Conn")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(sym)
 }
